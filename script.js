@@ -13,8 +13,45 @@ const blueItemPrice = document.querySelectorAll(
   "div.flex.items-center.title-font"
 )[1].nextElementSibling;
 
+const addToCartBtn = document.querySelectorAll(
+  "button.text-white.py-2.px-4.text-xl.bg-blue-500.rounded"
+);
+const shoppingCart = document.querySelector(
+  "div.bg-white.text-gray-700.body-font.shadow-lg.border.rounded-lg.flex.flex-col"
+);
+
+// FETCH Json data
+async function getItems(num) {
+  try {
+    const response = await fetch("items.json");
+    if (response.ok) {
+      const user = await response.json();
+      return user;
+    } else console.warn("Error");
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Removes cart by default (unless local storage has it saved)
+// cartBtn.classList.add("invisible");
+
+// If user clicks on add to cart button, a color block with price will be added to the shopping cart
 document.addEventListener("click", (e) => {
   if (e.target === cartBtn || e.target === svgCartBtn) {
-    console.log("true");
+    shoppingCart.classList.toggle("invisible");
+  }
+
+  if (
+    e.target.matches("button.text-white.py-2.px-4.text-xl.bg-blue-500.rounded")
+  ) {
   }
 });
+
+// Functions
+
+function createColorBlock() {
+  let img = document.createElement("img");
+  img.setAttribute("alt", "ecommerce");
+  console.log(img);
+}
