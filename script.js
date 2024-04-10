@@ -5,7 +5,10 @@ const cartBtn = document.querySelector(
 const svgCartBtn = document.querySelector("svg");
 const redCounter = document.querySelector("div.rounded-full");
 const closeBtn = document.querySelectorAll("[data-remove-from-cart-button]");
-const color = document.querySelectorAll("h2.text-gray-900.text-lg.font-medium");
+const colorName = document.querySelectorAll(
+  "h2.text-gray-900.text-lg.font-medium"
+);
+
 const redItemPrice = document.querySelectorAll(
   "div.flex.items-center.title-font"
 )[0].nextElementSibling;
@@ -16,9 +19,7 @@ const blueItemPrice = document.querySelectorAll(
 const addToCartBtn = document.querySelectorAll(
   "button.text-white.py-2.px-4.text-xl.bg-blue-500.rounded"
 );
-const shoppingCart = document.querySelector(
-  "div.bg-white.text-gray-700.body-font.shadow-lg.border.rounded-lg.flex.flex-col"
-);
+const colorCart = document.querySelector("div.overflow-y-auto.px-4.pt-4");
 
 // FETCH Json data
 async function getItems(num) {
@@ -36,22 +37,43 @@ async function getItems(num) {
 // Removes cart by default (unless local storage has it saved)
 // cartBtn.classList.add("invisible");
 
-// If user clicks on add to cart button, a color block with price will be added to the shopping cart
 document.addEventListener("click", (e) => {
+  // If user clicks on svg button, the shopping cart will appear
   if (e.target === cartBtn || e.target === svgCartBtn) {
     shoppingCart.classList.toggle("invisible");
   }
 
+  // If user clicks "ADD TO CART" then
+
   if (
     e.target.matches("button.text-white.py-2.px-4.text-xl.bg-blue-500.rounded")
   ) {
+    // computer will check two conditions
+    // if item color is already in the shopping cart add counter and add total price
+
+    // if item color is not already in the shopping cart, add it.
+    getItems().then((data) => {
+      for (let color of colorName) {
+        for (let object of data) {
+          if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
+            if (color.innerText === object.name) {
+              colorCart.innerHTML += createColorBlock(
+                object.name,
+                object.priceCents,
+                object.imageColor
+              );
+            }
+          }
+        }
+      }
+    });
   }
 });
 
 // Functions
 
-function createColorBlock() {
-  let img = document.createElement("img");
-  img.setAttribute("alt", "ecommerce");
-  console.log(img);
+function createColorBlock(name, price, color) {
+  let result = `<div class="mb-6"><div class="block relative h-24 rounded overflow-hidden"><img alt="ecommerce"class="object-cover object-center w-full h-full block rounded"src="https://dummyimage.com/210x130/${color}/${color}"/><button data-remove-from-cart-button class="absolute top-0 right-0 bg-black rounded-tr text-white w-6 h-6 text-lg flex justify-center items-center">&times;</button></div><div class="mt-2 flex justify-between"><div class="flex items-center title-font"><h2 class="text-gray-900 text-lg font-medium">${name}</h2><span class="text-gray-600 text-sm font-bold ml-1"></span></div><div>$${price}</div></div></div>`;
+
+  return result;
 }
