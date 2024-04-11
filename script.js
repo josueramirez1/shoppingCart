@@ -65,19 +65,16 @@ document.addEventListener("click", (e) => {
     // if item color is already in the shopping cart add counter and add total price
 
     for (let color of colorName) {
-      for (let colorCartName of colorCartNames)
-        if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
-          if (color.innerText === colorCartName.innerText) {
-            console.log(true);
-          }
-        }
-    }
-
-    // if item color is not already in the shopping cart, add it.
-    getItems().then((data) => {
-      for (let color of colorName) {
-        for (let object of data) {
+      if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
+        for (let colorCartName of colorCartNames)
           if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
+            if (color.innerText === colorCartName.innerText) {
+              console.log(true);
+            }
+          }
+        // if item color is not already in the shopping cart, add it.
+        getItems().then((data) => {
+          for (let object of data) {
             if (color.innerText === object.name) {
               let convertToString = object.priceCents.toString();
               let truePrice = parseInt(convertToString.substring(0, 2));
@@ -95,9 +92,9 @@ document.addEventListener("click", (e) => {
               console.log(colorCartNames);
             }
           }
-        }
+        });
       }
-    });
+    }
   }
 });
 
