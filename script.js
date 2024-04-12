@@ -66,33 +66,42 @@ document.addEventListener("click", (e) => {
 
     for (let color of colorName) {
       if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
-        for (let colorCartName of colorCartNames)
-          if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
-            if (color.innerText === colorCartName.innerText) {
-              console.log(true);
-            }
+        console.log(color.closest(".mt-4").children[0].children[1].innerText);
+
+        for (let colorCartName of colorCartNames) {
+          console.log(colorCartName.innerText);
+          if (
+            color.closest(".mt-4").children[0].children[1].innerText ===
+            colorCartName.innerText
+          ) {
+            return console.log("It's already here");
           }
+        }
+        getItems().then(
+          (data) => {
+            for (let object of data) {
+              if (color.innerText === object.name) {
+                let convertToString = object.priceCents.toString();
+                let truePrice = parseInt(convertToString.substring(0, 2));
+
+                colorCart.innerHTML += createColorBlock(
+                  object.name,
+                  truePrice,
+                  object.imageColor
+                );
+
+                totalPriceNum = totalPriceNum + truePrice;
+                totalPriceString.textContent = `$${totalPriceNum}.00`;
+
+                colorCartNames.push(colorCart);
+                console.log(colorCartNames);
+              }
+            }
+          },
+          { once: true }
+        );
+
         // if item color is not already in the shopping cart, add it.
-        getItems().then((data) => {
-          for (let object of data) {
-            if (color.innerText === object.name) {
-              let convertToString = object.priceCents.toString();
-              let truePrice = parseInt(convertToString.substring(0, 2));
-
-              colorCart.innerHTML += createColorBlock(
-                object.name,
-                truePrice,
-                object.imageColor
-              );
-
-              totalPriceNum = totalPriceNum + truePrice;
-              totalPriceString.textContent = `$${totalPriceNum}.00`;
-
-              colorCartNames.push(colorCart);
-              console.log(colorCartNames);
-            }
-          }
-        });
       }
     }
   }
@@ -100,11 +109,11 @@ document.addEventListener("click", (e) => {
 
 // Functions
 
-function createColorBlock(name, price, color) {
+let createColorBlock = (name, price, color) => {
   // let convertToString = price.toString();
   // let truePrice = parseInt(convertToString.substring(0, 2));
 
   let result = `<div class="mb-6"><div class="block relative h-24 rounded overflow-hidden"><img alt="ecommerce"class="object-cover object-center w-full h-full block rounded"src="https://dummyimage.com/210x130/${color}/${color}"/><button data-remove-from-cart-button class="absolute top-0 right-0 bg-black rounded-tr text-white w-6 h-6 text-lg flex justify-center items-center">&times;</button></div><div class="mt-2 flex justify-between"><div class="flex items-center title-font"><h2 class="text-gray-900 text-lg font-medium">${name}</h2><span class="text-gray-600 text-sm font-bold ml-1"></span></div><div>$${price}.00</div></div></div>`;
 
   return result;
-}
+};
