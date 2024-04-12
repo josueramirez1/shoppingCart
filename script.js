@@ -77,31 +77,23 @@ document.addEventListener("click", (e) => {
             return console.log("It's already here");
           }
         }
-        getItems().then(
-          (data) => {
-            for (let object of data) {
-              if (color.innerText === object.name) {
-                let convertToString = object.priceCents.toString();
-                let truePrice = parseInt(convertToString.substring(0, 2));
-
-                colorCart.innerHTML += createColorBlock(
-                  object.name,
-                  truePrice,
-                  object.imageColor
-                );
-
-                totalPriceNum = totalPriceNum + truePrice;
-                totalPriceString.textContent = `$${totalPriceNum}.00`;
-
-                colorCartNames.push(colorCart);
-                console.log(colorCartNames);
-              }
+        getItems().then((data) => {
+          for (let object of data) {
+            if (color.innerText === object.name) {
+              let convertToString = object.priceCents.toString();
+              let truePrice = parseInt(convertToString.substring(0, 2));
+              colorCart.innerHTML += createColorBlock(
+                object.name,
+                truePrice,
+                object.imageColor
+              );
+              totalPriceNum = totalPriceNum + truePrice;
+              totalPriceString.textContent = `$${totalPriceNum}.00`;
+              // colorCartNames.push(colorCart);
+              console.log(colorCartNames);
             }
-          },
-          { once: true }
-        );
-
-        // if item color is not already in the shopping cart, add it.
+          }
+        });
       }
     }
   }
