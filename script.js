@@ -22,6 +22,8 @@ const addToCartBtn = document.querySelectorAll(
 );
 const colorCart = document.querySelector("div.overflow-y-auto.px-4.pt-4");
 
+const colorCartColors = Array.from(document.querySelectorAll(".mb-6"));
+
 let colorCartNames = Array.from(
   document.querySelectorAll("div.flex.items-center.title-font")
 ).map((color) => {
@@ -34,7 +36,6 @@ let priceItems = Array.from(
   return counter.children[1];
 });
 
-console.log(priceItems);
 // Converting to total price string to number to add or subtract item color prices.
 let totalPriceString = document.querySelectorAll("span.font-bold")[2];
 let totalPriceNum = parseInt(totalPriceString.textContent.substring(1, 3));
@@ -67,7 +68,6 @@ document.addEventListener("click", (e) => {
   ).map((counter) => {
     return counter.children[1];
   });
-  console.log(priceItems);
   let count = 1;
   // If user clicks on svg button, the shopping cart will appear
   if (e.target === cartBtn || e.target === svgCartBtn) {
@@ -89,35 +89,64 @@ document.addEventListener("click", (e) => {
             color.closest(".mt-4").children[0].children[1].innerText ===
             colorCartName.innerText
           ) {
-            for (let price of priceItems) {
-              if (price === undefined) {
-                return (colorCartName.innerHTML += counterTimeNum(count));
+            return colorCartColors.map((cart) => {
+              // console.log(cart.children[1].children[0].children[0].innerText);
+              if (
+                colorCartName.innerText ===
+                cart.children[1].children[0].children[0].innerText
+              ) {
+                cart.remove();
+                newBlock(color);
+                return;
               }
-            }
+            });
           }
         }
-        getItems().then((data) => {
-          for (let object of data) {
-            if (color.innerText === object.name) {
-              let convertToString = object.priceCents.toString();
-              let truePrice = parseInt(convertToString.substring(0, 2));
-              colorCart.innerHTML += createColorBlock(
-                object.name,
-                truePrice,
-                object.imageColor
-              );
-              totalPriceNum = totalPriceNum + truePrice;
-              totalPriceString.textContent = `$${totalPriceNum}.00`;
-              // colorCartNames.push(colorCart);
-            }
-          }
-        });
+        return addBlock(color);
       }
     }
   }
 });
 
 // Functions
+
+let addBlock = (color) => {
+  return getItems().then((data) => {
+    for (let object of data) {
+      if (color.innerText === object.name) {
+        let convertToString = object.priceCents.toString();
+        let truePrice = parseInt(convertToString.substring(0, 2));
+        colorCart.innerHTML += createColorBlock(
+          object.name,
+          truePrice,
+          object.imageColor
+        );
+        totalPriceNum = totalPriceNum + truePrice;
+        totalPriceString.textContent = `$${totalPriceNum}.00`;
+        // colorCartNames.push(colorCart);
+      }
+    }
+  });
+};
+let newBlock = (color) => {
+  return getItems().then((data) => {
+    for (let object of data) {
+      if (color.innerText === object.name) {
+        let convertToString = object.priceCents.toString();
+        let truePrice = parseInt(convertToString.substring(0, 2));
+        let newTruePrice = truePrice + truePrice;
+        colorCart.innerHTML += createColorBlock(
+          object.name,
+          newTruePrice,
+          object.imageColor
+        );
+        totalPriceNum = totalPriceNum + newTruePrice;
+        totalPriceString.textContent = `$${totalPriceNum}.00`;
+        // colorCartNames.push(colorCart);
+      }
+    }
+  });
+};
 
 let createColorBlock = (name, price, color) => {
   // let convertToString = price.toString();
