@@ -83,30 +83,32 @@ document.addEventListener("click", (e) => {
           ) {
             // console.log(colorBox.children[1].children[0].children);
             if (colorBox.children[1].children[0].children.length === 1) {
-              console.log("hello");
               let span = document.createElement("span");
-              span.innerText = `x${count}`;
+              span.innerText = `x2`;
               span.classList.add(
                 "text-gray-600",
                 "text-sm",
                 "font-bold",
                 "ml-1"
               );
-              return colorBox.children[1].children[0].append(span);
+
+              colorBox.children[1].children[0].append(span);
+              count = 2;
+              return;
             }
             if (colorBox.children[1].children[0].children.length > 1) {
-              let span = document.querySelectorAll(
-                "span.text-gray-600.text-sm.font-bold.ml-1"
-              );
-
-              console.log(
-                colorBox.children[1].children[0].children[0].innerText
-              );
               if (
                 color.closest(".mt-4").children[0].children[1].innerText ===
                 colorBox.children[1].children[0].children[0].innerText
               ) {
-                colorBox.children[1].children[0].children[0].nextElementSibling.innerText = `x${++count}`;
+                let newCount = parseInt(
+                  colorBox.children[1].children[0].children[0].nextElementSibling.innerText.substring(
+                    1,
+                    2
+                  )
+                );
+
+                colorBox.children[1].children[0].children[0].nextElementSibling.innerText = `x${++newCount}`;
                 return;
               }
             }
