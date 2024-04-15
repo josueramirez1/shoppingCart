@@ -104,7 +104,7 @@ document.addEventListener("click", (e) => {
                 let newCount = parseInt(
                   colorBox.children[1].children[0].children[0].nextElementSibling.innerText.substring(
                     1,
-                    2
+                    8
                   )
                 );
 
