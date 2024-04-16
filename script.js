@@ -22,7 +22,7 @@ const addToCartBtn = document.querySelectorAll(
 );
 const colorCart = document.querySelector("div.overflow-y-auto.px-4.pt-4");
 
-const colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
+let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
 
 // let priceItems = Array.from(
 //   document.querySelectorAll("div.flex.items-center.title-font")
@@ -55,6 +55,7 @@ async function getItems(num) {
 // cartBtn.classList.add("invisible");
 let count = 2;
 document.addEventListener("click", (e) => {
+  colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
   // priceItems = Array.from(
   //   document.querySelectorAll("div.flex.items-center.title-font")
   // ).map((counter) => {
@@ -75,14 +76,9 @@ document.addEventListener("click", (e) => {
   if (
     e.target.matches("button.text-white.py-2.px-4.text-xl.bg-blue-500.rounded")
   ) {
-    // computer will check two conditions
-    // if item is not in shopping cart add it
-
-    // if item color is already in the shopping cart add counter and add total price
-
     for (let color of colorName) {
       if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
-        colorBoxes.map((colorBox) => {
+        colorBoxes.forEach((colorBox) => {
           if (
             color.closest(".mt-4").children[0].children[1].innerText ===
             colorBox.children[1].children[0].children[0].innerText
@@ -91,7 +87,7 @@ document.addEventListener("click", (e) => {
             // If item is already there but you need double of an item, add the counter x2 and multiply price by 2
             if (colorBox.children[1].children[0].children.length === 1) {
               let span = document.createElement("span");
-              span.innerText = `x2`;
+              span.innerText = `x${count}`;
               span.classList.add(
                 "text-gray-600",
                 "text-sm",
@@ -99,9 +95,9 @@ document.addEventListener("click", (e) => {
                 "ml-1"
               );
 
+              colorBox.children[1].children[0].append(span);
               addSingleAndTotal(color, colorBox);
 
-              colorBox.children[1].children[0].append(span);
               count = 2;
               return;
             }
@@ -124,6 +120,18 @@ document.addEventListener("click", (e) => {
           }
         });
       }
+
+      if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
+        let newColorBoxes = colorBoxes.filter((colorBox) => {
+          return (
+            colorBox.children[1].children[0].children[0].innerText ===
+            e.target.previousElementSibling.children[1].innerText
+          );
+        });
+        if (newColorBoxes.length === 0) {
+          return addBlock(color);
+        }
+      }
     }
   }
 });
@@ -131,22 +139,34 @@ document.addEventListener("click", (e) => {
 // Functions
 
 function addBlock(color) {
-  return getItems().then((data) => {
-    for (let object of data) {
-      if (color.innerText === object.name) {
-        let convertToString = object.priceCents.toString();
-        let truePrice = parseInt(convertToString.substring(0, 2));
-        colorCart.innerHTML += createColorBlock(
-          object.name,
-          truePrice,
-          object.imageColor
-        );
-        totalPriceNum = totalPriceNum + truePrice;
-        totalPriceString.textContent = `$${totalPriceNum}.00`;
-        // colorCartNames.push(colorCart);
+  return (
+    getItems().then((data) => {
+      for (let object of data) {
+        if (color.innerText === object.name) {
+          let convertToString = object.priceCents.toString();
+          let truePrice = parseInt(convertToString.substring(0, 2));
+          let cBox = document.createElement("div");
+          cBox.classList.add("mb-6");
+          cBox.innerHTML = createColorBlock(
+            object.name,
+            truePrice,
+            object.imageColor
+          );
+          totalPriceNum = totalPriceNum + truePrice;
+          totalPriceString.textContent = `$${totalPriceNum}.00`;
+          colorCart.append(cBox);
+
+          // console.log(cBox);
+          // let box = (colorCart.innerHTML += createColorBlock(
+          //   object.name,
+          //   truePrice,
+          //   object.imageColor
+          // ));
+        }
       }
-    }
-  });
+    }),
+    { once: "true" }
+  );
 }
 
 function addSingleAndTotal(color, colorBox) {
@@ -156,20 +176,19 @@ function addSingleAndTotal(color, colorBox) {
         let convertToString = object.priceCents.toString();
         let truePrice = parseInt(convertToString.substring(0, 2));
         let singlePriceItem = parseInt(
-          colorBox.children[1].children[1].innerText.substring(1, 3)
+          colorBox.children[1].children[1].innerText.substring(1, 8)
         );
         let totalSinglePriceItem = singlePriceItem + truePrice;
         colorBox.children[1].children[1].textContent = `$${totalSinglePriceItem}.00`;
         totalPriceNum = totalPriceNum + truePrice;
         totalPriceString.textContent = `$${totalPriceNum}.00`;
-        // colorCartNames.push(colorCart);
       }
     }
   });
 }
 
 let createColorBlock = (name, price, color) => {
-  let result = `<div class="mb-6"><div class="block relative h-24 rounded overflow-hidden"><img alt="ecommerce"class="object-cover object-center w-full h-full block rounded"src="https://dummyimage.com/210x130/${color}/${color}"/><button data-remove-from-cart-button class="absolute top-0 right-0 bg-black rounded-tr text-white w-6 h-6 text-lg flex justify-center items-center">&times;</button></div><div class="mt-2 flex justify-between"><div class="flex items-center title-font"><h2 class="text-gray-900 text-lg font-medium">${name}</h2><span class="text-gray-600 text-sm font-bold ml-1"></span></div><div>$${price}.00</div></div></div>`;
+  let result = `<div class="block relative h-24 rounded overflow-hidden"><img alt="ecommerce"class="object-cover object-center w-full h-full block rounded"src="https://dummyimage.com/210x130/${color}/${color}"/><button data-remove-from-cart-button class="absolute top-0 right-0 bg-black rounded-tr text-white w-6 h-6 text-lg flex justify-center items-center">&times;</button></div><div class="mt-2 flex justify-between"><div class="flex items-center title-font"><h2 class="text-gray-900 text-lg font-medium">${name}</h2></div><div>$${price}.00</div></div>`;
 
   return result;
 };
