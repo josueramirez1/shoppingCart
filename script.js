@@ -6,7 +6,7 @@ const svgCartBtn = document.querySelector("svg");
 const shoppingCart = document.querySelector(
   "div.bg-white.text-gray-700.body-font.shadow-lg.border.rounded-lg.flex.flex-col"
 );
-const redCounter = document.querySelector("div.rounded-full");
+let redCounter = document.querySelector("div.rounded-full");
 const closeBtn = document.querySelectorAll("[data-remove-from-cart-button]");
 
 const colorName = document.querySelectorAll(
@@ -17,23 +17,11 @@ let singleItemPrice = Array.from(
 ).map((price) => {
   return price.children[1];
 });
-
 const addToCartBtn = document.querySelectorAll(
   "button.text-white.py-2.px-4.text-xl.bg-blue-500.rounded"
 );
 const colorCart = document.querySelector("div.overflow-y-auto.px-4.pt-4");
-// let closeBtn = document.querySelectorAll(
-//   ".absolute.top-0.right-0.bg-black.rounded-tr.text-white.w-6.h-6.text-lg.flex.justify-center.items-center"
-// );
-
 let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
-
-// let priceItems = Array.from(
-//   document.querySelectorAll("div.flex.items-center.title-font")
-// ).map((counter) => {
-//   return counter.children[1];
-// });
-
 // Converting to total price string to number to add or subtract item color prices.
 let totalPriceString = document.querySelectorAll("span.font-bold")[2];
 let totalPriceNum = parseInt(totalPriceString.textContent.substring(1, 3));
@@ -54,6 +42,8 @@ async function getItems(num) {
     console.error(error);
   }
 }
+
+redCounter.innerText = colorBoxes.length;
 
 // Removes cart by default (unless local storage has it saved)
 // cartBtn.classList.add("invisible");
@@ -137,6 +127,8 @@ document.addEventListener("click", (e) => {
         });
         // if new array does not have a duplicate, add a new color block
         if (newColorBoxes.length === 0) {
+          let numRedCounter = parseInt(redCounter.innerText) + 1;
+          redCounter.innerText = numRedCounter;
           addBlock(color);
         }
       }
@@ -152,6 +144,8 @@ document.addEventListener("click", (e) => {
           color.closest(".mt-4").children[0].children[1].innerText ===
           colorBox.children[1].children[0].children[0].innerText
         ) {
+          let subRedCounter = parseInt(redCounter.innerText) - 1;
+          redCounter.innerText = subRedCounter;
           subtractSingleAndTotal(color, colorBox);
           return colorBox.remove();
         }
