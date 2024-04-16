@@ -8,6 +8,7 @@ const shoppingCart = document.querySelector(
 );
 const redCounter = document.querySelector("div.rounded-full");
 const closeBtn = document.querySelectorAll("[data-remove-from-cart-button]");
+
 const colorName = document.querySelectorAll(
   "h2.text-gray-900.text-lg.font-medium"
 );
@@ -21,6 +22,9 @@ const addToCartBtn = document.querySelectorAll(
   "button.text-white.py-2.px-4.text-xl.bg-blue-500.rounded"
 );
 const colorCart = document.querySelector("div.overflow-y-auto.px-4.pt-4");
+// let closeBtn = document.querySelectorAll(
+//   ".absolute.top-0.right-0.bg-black.rounded-tr.text-white.w-6.h-6.text-lg.flex.justify-center.items-center"
+// );
 
 let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
 
@@ -77,14 +81,15 @@ document.addEventListener("click", (e) => {
     e.target.matches("button.text-white.py-2.px-4.text-xl.bg-blue-500.rounded")
   ) {
     for (let color of colorName) {
+      // if user clicks "ADD TO CART"...
       if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
         colorBoxes.forEach((colorBox) => {
+          // and if items is already in shopping cart...
           if (
             color.closest(".mt-4").children[0].children[1].innerText ===
             colorBox.children[1].children[0].children[0].innerText
           ) {
-            // console.log(colorBox.children[1].children[0].children);
-            // If item is already there but you need double of an item, add the counter x2 and multiply price by 2
+            // if item does not contain a counter, add a counter
             if (colorBox.children[1].children[0].children.length === 1) {
               let span = document.createElement("span");
               span.innerText = `x${count}`;
@@ -101,6 +106,7 @@ document.addEventListener("click", (e) => {
               count = 2;
               return;
             }
+            // or if item already has a counter, continue adding up
             if (colorBox.children[1].children[0].children.length > 1) {
               if (
                 color.closest(".mt-4").children[0].children[1].innerText ===
@@ -120,16 +126,35 @@ document.addEventListener("click", (e) => {
           }
         });
       }
-
+      // If user clicks 'ADD TO CART'...
       if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
         let newColorBoxes = colorBoxes.filter((colorBox) => {
           return (
+            // then check if color is in shopping cart. if item equals the color add it to new var
             colorBox.children[1].children[0].children[0].innerText ===
             e.target.previousElementSibling.children[1].innerText
           );
         });
+        // if new array does not have a duplicate, add a new color block
         if (newColorBoxes.length === 0) {
-          return addBlock(color);
+          addBlock(color);
+        }
+      }
+    }
+  }
+});
+
+document.addEventListener("click", (e) => {
+  for (let color of colorName) {
+    for (let colorBox of colorBoxes) {
+      if (e.target.closest(".mb-6") === colorBox.closest(".mb-6")) {
+        console.log(colorBox.children[1].children[0].children[0].innerText);
+        if (
+          color.closest(".mt-4").children[0].children[1].innerText ===
+          colorBox.children[1].children[0].children[0].innerText
+        ) {
+          subtractSingleAndTotal(color, colorBox);
+          return colorBox.remove();
         }
       }
     }
@@ -179,9 +204,30 @@ function addSingleAndTotal(color, colorBox) {
           colorBox.children[1].children[1].innerText.substring(1, 8)
         );
         let totalSinglePriceItem = singlePriceItem + truePrice;
+        console.log(totalSinglePriceItem);
         colorBox.children[1].children[1].textContent = `$${totalSinglePriceItem}.00`;
         totalPriceNum = totalPriceNum + truePrice;
+        console.log(totalPriceNum);
         totalPriceString.textContent = `$${totalPriceNum}.00`;
+      }
+    }
+  });
+}
+
+function subtractSingleAndTotal(color, colorBox) {
+  count = 2;
+  getItems().then((data) => {
+    for (let object of data) {
+      if (color.innerText === object.name) {
+        let convertToString = object.priceCents.toString();
+        let truePrice = parseInt(convertToString.substring(0, 2));
+
+        let addedPrice = truePrice * count;
+        totalPriceNum = totalPriceNum - addedPrice;
+        totalPriceString.textContent = `$${totalPriceNum}.00`;
+
+        // else totalPriceNum = totalPriceNum - truePrice;
+        // totalPriceString.textContent = `$${totalPriceNum}.00`;
       }
     }
   });
