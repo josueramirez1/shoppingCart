@@ -109,6 +109,10 @@ document.addEventListener("click", (e) => {
       }
       // If user clicks 'ADD TO CART'...
       if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
+        if (cartBtn.matches(".invisible")) {
+          cartBtn.classList.remove("invisible");
+        }
+
         let newColorBoxes = colorBoxes.filter((colorBox) => {
           return (
             // then check if color is in shopping cart. if item equals the color add it to new var
@@ -146,6 +150,7 @@ document.addEventListener("click", (e) => {
           subtractSingleAndTotal(color, colorBox);
           // If the red counter turns to zero
           if (subRedCounter === 0) {
+            cartBtn.classList.add("invisible");
             cartBox.classList.add("invisible");
           }
           return colorBox.remove();
