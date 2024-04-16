@@ -148,7 +148,6 @@ document.addEventListener("click", (e) => {
   for (let color of colorName) {
     for (let colorBox of colorBoxes) {
       if (e.target.closest(".mb-6") === colorBox.closest(".mb-6")) {
-        console.log(colorBox.children[1].children[0].children[0].innerText);
         if (
           color.closest(".mt-4").children[0].children[1].innerText ===
           colorBox.children[1].children[0].children[0].innerText
@@ -215,19 +214,25 @@ function addSingleAndTotal(color, colorBox) {
 }
 
 function subtractSingleAndTotal(color, colorBox) {
-  count = 2;
   getItems().then((data) => {
     for (let object of data) {
       if (color.innerText === object.name) {
         let convertToString = object.priceCents.toString();
         let truePrice = parseInt(convertToString.substring(0, 2));
+        if (colorBox.children[1].children[0].children.length > 1) {
+          let newCount = parseInt(
+            colorBox.children[1].children[0].children[0].nextElementSibling.innerText.substring(
+              1,
+              8
+            )
+          );
+          console.log(newCount);
 
-        let addedPrice = truePrice * count;
-        totalPriceNum = totalPriceNum - addedPrice;
+          let addedPrice = truePrice * newCount;
+          totalPriceNum = totalPriceNum - addedPrice;
+          totalPriceString.textContent = `$${totalPriceNum}.00`;
+        } else totalPriceNum = totalPriceNum - truePrice;
         totalPriceString.textContent = `$${totalPriceNum}.00`;
-
-        // else totalPriceNum = totalPriceNum - truePrice;
-        // totalPriceString.textContent = `$${totalPriceNum}.00`;
       }
     }
   });
