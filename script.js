@@ -203,10 +203,8 @@ function addSingleAndTotal(color, colorBox) {
           colorBox.children[1].children[1].innerText.substring(1, 8)
         );
         let totalSinglePriceItem = singlePriceItem + truePrice;
-        console.log(totalSinglePriceItem);
         colorBox.children[1].children[1].textContent = `$${totalSinglePriceItem}.00`;
         totalPriceNum = totalPriceNum + truePrice;
-        console.log(totalPriceNum);
         totalPriceString.textContent = `$${totalPriceNum}.00`;
       }
     }
@@ -226,7 +224,6 @@ function subtractSingleAndTotal(color, colorBox) {
               8
             )
           );
-          console.log(newCount);
 
           let addedPrice = truePrice * newCount;
           totalPriceNum = totalPriceNum - addedPrice;
