@@ -17,10 +17,12 @@ let singleItemPrice = Array.from(
 ).map((price) => {
   return price.children[1];
 });
-const addToCartBtn = document.querySelectorAll(
-  "button.text-white.py-2.px-4.text-xl.bg-blue-500.rounded"
-);
+
 const colorCart = document.querySelector("div.overflow-y-auto.px-4.pt-4");
+const cartBox = document.querySelector(
+  "div.bg-white.text-gray-700.body-font.shadow-lg.border.rounded-lg.flex.flex-col"
+);
+
 let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
 // Converting to total price string to number to add or subtract item color prices.
 let totalPriceString = document.querySelectorAll("span.font-bold")[2];
@@ -43,22 +45,11 @@ async function getItems(num) {
   }
 }
 
-redCounter.innerText = colorBoxes.length;
-
 // Removes cart by default (unless local storage has it saved)
 // cartBtn.classList.add("invisible");
 let count = 2;
 document.addEventListener("click", (e) => {
   colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
-  // priceItems = Array.from(
-  //   document.querySelectorAll("div.flex.items-center.title-font")
-  // ).map((counter) => {
-  //   return counter.children[1];
-  // });
-
-  // singleItemPriceNum = singleItemPrice.map((price) => {
-  //   return parseInt(price.textContent.substring(1, 3));
-  // });
 
   // If user clicks on svg button, the shopping cart will appear
   if (e.target === cartBtn || e.target === svgCartBtn) {
@@ -136,9 +127,12 @@ document.addEventListener("click", (e) => {
   }
 });
 
+// Close button
 document.addEventListener("click", (e) => {
   for (let color of colorName) {
     for (let colorBox of colorBoxes) {
+      // if user clicks on specific close box button...
+
       if (e.target.closest(".mb-6") === colorBox.closest(".mb-6")) {
         if (
           color.closest(".mt-4").children[0].children[1].innerText ===
@@ -147,6 +141,9 @@ document.addEventListener("click", (e) => {
           let subRedCounter = parseInt(redCounter.innerText) - 1;
           redCounter.innerText = subRedCounter;
           subtractSingleAndTotal(color, colorBox);
+          if (subRedCounter === 0) {
+            cartBox.classList.add("invisible");
+          }
           return colorBox.remove();
         }
       }
