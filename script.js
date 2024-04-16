@@ -2,6 +2,9 @@
 const cartBtn = document.querySelector(
   "button.fixed.top-0.right-0.mr-4.mt-4.w-12.bg-blue-500.p-2.rounded-full.text-white"
 );
+const cartBox = document.querySelector(
+  "div.bg-white.text-gray-700.body-font.shadow-lg.border.rounded-lg.flex.flex-col"
+);
 const svgCartBtn = document.querySelector("svg");
 const shoppingCart = document.querySelector(
   "div.bg-white.text-gray-700.body-font.shadow-lg.border.rounded-lg.flex.flex-col"
@@ -19,9 +22,6 @@ let singleItemPrice = Array.from(
 });
 
 const colorCart = document.querySelector("div.overflow-y-auto.px-4.pt-4");
-const cartBox = document.querySelector(
-  "div.bg-white.text-gray-700.body-font.shadow-lg.border.rounded-lg.flex.flex-col"
-);
 
 let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
 // Converting to total price string to number to add or subtract item color prices.
@@ -124,9 +124,6 @@ document.addEventListener("click", (e) => {
         if (newColorBoxes.length === 0) {
           let numRedCounter = parseInt(redCounter.innerText) + 1;
           redCounter.innerText = numRedCounter;
-          if (numRedCounter === 1) {
-            cartBox.classList.remove("invisible");
-          }
           addBlock(color);
         }
       }
