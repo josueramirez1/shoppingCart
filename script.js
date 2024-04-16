@@ -120,6 +120,9 @@ document.addEventListener("click", (e) => {
         if (newColorBoxes.length === 0) {
           let numRedCounter = parseInt(redCounter.innerText) + 1;
           redCounter.innerText = numRedCounter;
+          if (numRedCounter === 1) {
+            cartBox.classList.remove("invisible");
+          }
           addBlock(color);
         }
       }
@@ -141,6 +144,7 @@ document.addEventListener("click", (e) => {
           let subRedCounter = parseInt(redCounter.innerText) - 1;
           redCounter.innerText = subRedCounter;
           subtractSingleAndTotal(color, colorBox);
+          // If the red counter turns to zero
           if (subRedCounter === 0) {
             cartBox.classList.add("invisible");
           }
