@@ -64,6 +64,11 @@ document.addEventListener("click", (e) => {
     for (let color of colorName) {
       // if button and color share parent, check to see if color is in shopping cart as well...
       if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
+        // if visibility is hidden, make button visible
+        if (cartBtn.matches(".invisible") && cartBox.matches(".invisible")) {
+          cartBtn.classList.remove("invisible");
+        }
+
         let newColorBoxes = colorBoxes.filter((colorBox) => {
           // Return items that match the color that is to be added
           return (
