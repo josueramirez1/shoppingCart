@@ -67,7 +67,7 @@ document.addEventListener("click", (e) => {
         let newColorBoxes = colorBoxes.filter((colorBox) => {
           // Return items that match the color that is to be added
           return (
-            colorBox.children[1].children[0].children[0].innerText ===
+            colorBox.children[1].children[0].children[0].innerHTML ===
             e.target.previousElementSibling.children[1].innerText
           );
         });
@@ -82,7 +82,7 @@ document.addEventListener("click", (e) => {
           //  if color is already in shopping cart...
           if (
             color.closest(".mt-4").children[0].children[1].innerText ===
-            colorBox.children[1].children[0].children[0].innerText
+            colorBox.children[1].children[0].children[0].innerHTML
           ) {
             // and if item does not contain a counter, add a counter
             if (colorBox.children[1].children[0].children.length === 1) {
@@ -105,16 +105,16 @@ document.addEventListener("click", (e) => {
             if (colorBox.children[1].children[0].children.length > 1) {
               if (
                 color.closest(".mt-4").children[0].children[1].innerText ===
-                colorBox.children[1].children[0].children[0].innerText
+                colorBox.children[1].children[0].children[0].innerHTML
               ) {
                 let newCount = parseInt(
-                  colorBox.children[1].children[0].children[0].nextElementSibling.innerText.substring(
+                  colorBox.children[1].children[0].children[0].nextElementSibling.innerHTML.substring(
                     1,
                     8
                   )
                 );
                 addSingleAndTotal(color, colorBox);
-                colorBox.children[1].children[0].children[0].nextElementSibling.innerText = `x${++newCount}`;
+                colorBox.children[1].children[0].children[0].nextElementSibling.innerHTML = `x${++newCount}`;
                 return;
               }
             }
@@ -172,13 +172,6 @@ function addBlock(color) {
           totalPriceNum = totalPriceNum + truePrice;
           totalPriceString.textContent = `$${totalPriceNum}.00`;
           colorCart.append(cBox);
-
-          // console.log(cBox);
-          // let box = (colorCart.innerHTML += createColorBlock(
-          //   object.name,
-          //   truePrice,
-          //   object.imageColor
-          // ));
         }
       }
     }),
@@ -193,7 +186,7 @@ function addSingleAndTotal(color, colorBox) {
         let convertToString = object.priceCents.toString();
         let truePrice = parseInt(convertToString.substring(0, 2));
         let singlePriceItem = parseInt(
-          colorBox.children[1].children[1].innerText.substring(1, 8)
+          colorBox.children[1].children[1].innerHTML.substring(1, 8)
         );
         let totalSinglePriceItem = singlePriceItem + truePrice;
         colorBox.children[1].children[1].textContent = `$${totalSinglePriceItem}.00`;
