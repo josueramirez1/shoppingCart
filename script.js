@@ -62,15 +62,29 @@ document.addEventListener("click", (e) => {
     e.target.matches("button.text-white.py-2.px-4.text-xl.bg-blue-500.rounded")
   ) {
     for (let color of colorName) {
-      // if user clicks "ADD TO CART"...
+      // if button and color share parent, check to see if color is in shopping cart as well...
       if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
+        let newColorBoxes = colorBoxes.filter((colorBox) => {
+          // Return items that match the color that is to be added
+          return (
+            colorBox.children[1].children[0].children[0].innerText ===
+            e.target.previousElementSibling.children[1].innerText
+          );
+        });
+        // if new array shows empty, it means that color is not in shopping cart so add a new color block
+        if (newColorBoxes.length === 0) {
+          let numRedCounter = parseInt(redCounter.innerText) + 1;
+          redCounter.innerText = numRedCounter;
+          addBlock(color);
+        }
+        // but...
         colorBoxes.forEach((colorBox) => {
-          // and if items is already in shopping cart...
+          //  if color is already in shopping cart...
           if (
             color.closest(".mt-4").children[0].children[1].innerText ===
             colorBox.children[1].children[0].children[0].innerText
           ) {
-            // if item does not contain a counter, add a counter
+            // and if item does not contain a counter, add a counter
             if (colorBox.children[1].children[0].children.length === 1) {
               let span = document.createElement("span");
               span.innerText = `x${count}`;
@@ -107,26 +121,6 @@ document.addEventListener("click", (e) => {
           }
         });
       }
-      // If user clicks 'ADD TO CART'...
-      if (e.target.closest(".mt-4") === color.closest(".mt-4")) {
-        if (cartBtn.matches(".invisible")) {
-          cartBtn.classList.remove("invisible");
-        }
-
-        let newColorBoxes = colorBoxes.filter((colorBox) => {
-          return (
-            // then check if color is in shopping cart. if item equals the color add it to new var
-            colorBox.children[1].children[0].children[0].innerText ===
-            e.target.previousElementSibling.children[1].innerText
-          );
-        });
-        // if new array does not have a duplicate, add a new color block
-        if (newColorBoxes.length === 0) {
-          let numRedCounter = parseInt(redCounter.innerText) + 1;
-          redCounter.innerText = numRedCounter;
-          addBlock(color);
-        }
-      }
     }
   }
 });
@@ -135,18 +129,20 @@ document.addEventListener("click", (e) => {
 document.addEventListener("click", (e) => {
   for (let color of colorName) {
     for (let colorBox of colorBoxes) {
-      // if user clicks on specific close box button...
-
+      // if user clicks on close button...
       if (e.target.closest(".mb-6") === colorBox.closest(".mb-6")) {
+        // if color box and color share the same name...
         if (
           color.closest(".mt-4").children[0].children[1].innerText ===
           colorBox.children[1].children[0].children[0].innerText
         ) {
+          // Remove one counter and subtract from total price
           let subRedCounter = parseInt(redCounter.innerText) - 1;
           redCounter.innerText = subRedCounter;
           subtractSingleAndTotal(color, colorBox);
           // If the red counter turns to zero
           if (subRedCounter === 0) {
+            // Remove both shopping cart and icon from sight
             cartBtn.classList.add("invisible");
             cartBox.classList.add("invisible");
           }
