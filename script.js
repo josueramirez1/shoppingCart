@@ -26,11 +26,14 @@ const colorCart = document.querySelector("div.overflow-y-auto.px-4.pt-4");
 let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
 
 // Converting to total price string to number to add or subtract item color prices.
-let totalPriceString = document.querySelectorAll("span.font-bold")[2];
-let totalPriceNum = parseInt(totalPriceString.textContent.substring(1, 3));
+let section = document.querySelector("section.text-gray-700.body-font");
+let totalPriceString =
+  section.nextElementSibling.children[0].children[0].children[1].children[1];
+
+let totalPriceNum = parseInt(totalPriceString.innerHTML.substring(1, 3));
 
 let singleItemPriceNum = singleItemPrice.map((price) => {
-  return parseInt(price.textContent.substring(1, 3));
+  return parseInt(price.innerHTML.substring(1, 3));
 });
 
 // FETCH Json data
