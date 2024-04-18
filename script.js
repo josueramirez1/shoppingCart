@@ -24,6 +24,7 @@ let singleItemPrice = Array.from(
 const colorCart = document.querySelector("div.overflow-y-auto.px-4.pt-4");
 
 let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
+
 // Converting to total price string to number to add or subtract item color prices.
 let totalPriceString = document.querySelectorAll("span.font-bold")[2];
 let totalPriceNum = parseInt(totalPriceString.textContent.substring(1, 3));
@@ -45,6 +46,9 @@ async function getItems(num) {
   }
 }
 
+// Retrieve local storage items
+let array = JSON.parse(localStorage.getItem("key"));
+// console.log(array);
 // Removes cart by default (unless local storage has it saved)
 // cartBtn.classList.add("invisible");
 let count = 2;
@@ -102,8 +106,9 @@ document.addEventListener("click", (e) => {
 
               colorBox.children[1].children[0].append(span);
               addSingleAndTotal(color, colorBox);
-
+              toLocalStorage();
               count = 2;
+
               return;
             }
             // or if item already has a counter, continue adding up
@@ -120,6 +125,7 @@ document.addEventListener("click", (e) => {
                 );
                 addSingleAndTotal(color, colorBox);
                 colorBox.children[1].children[0].children[0].nextElementSibling.innerHTML = `x${++newCount}`;
+                toLocalStorage();
                 return;
               }
             }
@@ -151,7 +157,16 @@ document.addEventListener("click", (e) => {
             cartBtn.classList.add("invisible");
             cartBox.classList.add("invisible");
           }
-          return colorBox.remove();
+          // Remove item from array
+          const item = colorBoxes.indexOf(colorBox);
+          if (item > -1) {
+            colorBoxes.splice(item, 1);
+          }
+          // Remove color box from shopping cart
+          colorBox.remove();
+          // Update local storage
+          toLocalStorage();
+          return;
         }
       }
     }
@@ -160,28 +175,28 @@ document.addEventListener("click", (e) => {
 
 // Functions
 
-function addBlock(color) {
-  return (
-    getItems().then((data) => {
-      for (let object of data) {
-        if (color.innerText === object.name) {
-          let convertToString = object.priceCents.toString();
-          let truePrice = parseInt(convertToString.substring(0, 2));
-          let cBox = document.createElement("div");
-          cBox.classList.add("mb-6");
-          cBox.innerHTML = createColorBlock(
-            object.name,
-            truePrice,
-            object.imageColor
-          );
-          totalPriceNum = totalPriceNum + truePrice;
-          totalPriceString.textContent = `$${totalPriceNum}.00`;
-          colorCart.append(cBox);
-        }
+function addBlock(color, colorBox) {
+  return getItems().then((data) => {
+    for (let object of data) {
+      if (color.innerText === object.name) {
+        let convertToString = object.priceCents.toString();
+        let truePrice = parseInt(convertToString.substring(0, 2));
+        let cBox = document.createElement("div");
+        cBox.classList.add("mb-6");
+        cBox.innerHTML = createColorBlock(
+          object.name,
+          truePrice,
+          object.imageColor
+        );
+        totalPriceNum = totalPriceNum + truePrice;
+        totalPriceString.textContent = `$${totalPriceNum}.00`;
+        colorBoxes.push(cBox);
+        colorCart.append(cBox);
+        // Update local storage
+        toLocalStorage();
       }
-    }),
-    { once: "true" }
-  );
+    }
+  });
 }
 
 function addSingleAndTotal(color, colorBox) {
@@ -197,6 +212,7 @@ function addSingleAndTotal(color, colorBox) {
         colorBox.children[1].children[1].textContent = `$${totalSinglePriceItem}.00`;
         totalPriceNum = totalPriceNum + truePrice;
         totalPriceString.textContent = `$${totalPriceNum}.00`;
+        toLocalStorage();
       }
     }
   });
@@ -226,17 +242,16 @@ function subtractSingleAndTotal(color, colorBox) {
   });
 }
 
-let createColorBlock = (name, price, color) => {
+function createColorBlock(name, price, color) {
   let result = `<div class="block relative h-24 rounded overflow-hidden"><img alt="ecommerce"class="object-cover object-center w-full h-full block rounded"src="https://dummyimage.com/210x130/${color}/${color}"/><button data-remove-from-cart-button class="absolute top-0 right-0 bg-black rounded-tr text-white w-6 h-6 text-lg flex justify-center items-center">&times;</button></div><div class="mt-2 flex justify-between"><div class="flex items-center title-font"><h2 class="text-gray-900 text-lg font-medium">${name}</h2></div><div>$${price}.00</div></div>`;
 
   return result;
-};
+}
 
-function tagName(color) {
-  let result = `<div class="flex items-center title-font">
-  <h2 class="text-gray-900 text-lg font-medium">${color}</h2>
-  <span class="text-gray-600 text-sm font-bold ml-1">x2</span>
-</div>`;
-
-  return result;
+function toLocalStorage() {
+  let newBoxes = colorBoxes.map((box) => {
+    return box.innerHTML;
+  });
+  let string = JSON.stringify(newBoxes);
+  localStorage.setItem("key", string);
 }
