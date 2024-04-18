@@ -255,6 +255,7 @@ function subtractSingleAndTotal(color, colorBox) {
         } else totalPriceNum = totalPriceNum - truePrice;
         totalPriceString.textContent = `$${totalPriceNum}.00`;
       }
+      toLocalStorage(totalPriceNum);
     }
   });
 }
