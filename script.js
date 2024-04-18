@@ -21,20 +21,9 @@ let singleItemPrice = Array.from(
   return price.children[1];
 });
 
-const colorCart = document.querySelector("div.overflow-y-auto.px-4.pt-4");
+let colorCart = document.querySelector("div.overflow-y-auto.px-4.pt-4");
 
-let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
-
-// Converting to total price string to number to add or subtract item color prices.
-let section = document.querySelector("section.text-gray-700.body-font");
-let totalPriceString =
-  section.nextElementSibling.children[0].children[0].children[1].children[1];
-
-let totalPriceNum = parseInt(totalPriceString.innerHTML.substring(1, 3));
-
-let singleItemPriceNum = singleItemPrice.map((price) => {
-  return parseInt(price.innerHTML.substring(1, 3));
-});
+// let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
 
 // FETCH Json data
 async function getItems(num) {
@@ -48,23 +37,48 @@ async function getItems(num) {
     console.error(error);
   }
 }
-
 // Retrieve local storage items
-let array = JSON.parse(localStorage.getItem("key"));
-// console.log(array);
-// Removes cart by default (unless local storage has it saved)
-// cartBtn.classList.add("invisible");
-let count = 2;
-document.addEventListener("click", (e) => {
-  colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
+let savedColors = JSON.parse(localStorage.getItem("colorBoxes"));
+let savedPrice = JSON.parse(localStorage.getItem("totalPrice"));
 
+// If local storage contains values...
+if (savedColors !== null && savedPrice !== null) {
+  // Show shopping cart button
+  cartBtn.classList.remove("invisible");
+  // Select cart and total html
+  let cart = document.querySelector(
+    ".fixed.top-0.right-0.mr-4.mt-4.w-12.bg-blue-500.p-2.rounded-full.text-white"
+  ).previousElementSibling.children[0].children[0];
+  let price = document.querySelector(
+    ".fixed.top-0.right-0.mr-4.mt-4.w-12.bg-blue-500.p-2.rounded-full.text-white"
+  ).previousElementSibling.children[0].children[1].children[1];
+  // Attached saved colors to shopping cart
+  savedColors.forEach((savedBox) => {
+    cart.innerHTML += savedBox;
+  });
+  // Attach saved price to total price
+  price.innerHTML = `$${savedPrice}.00`;
+  // For each array item in local storage add red counter
+  redCounter.innerText = savedColors.length;
+}
+// Converting to total price string to number to add or subtract item color prices.
+let section = document.querySelector("section.text-gray-700.body-font");
+let totalPriceString =
+  section.nextElementSibling.children[0].children[0].children[1].children[1];
+let totalPriceNum = parseInt(totalPriceString.innerHTML.substring(1, 8));
+let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
+console.log(totalPriceNum);
+let count = 2;
+
+document.addEventListener("click", (e) => {
   // If user clicks on svg button, the shopping cart will appear
   if (e.target === cartBtn || e.target === svgCartBtn) {
     shoppingCart.classList.toggle("invisible");
   }
+});
 
+document.addEventListener("click", (e) => {
   // If user clicks "ADD TO CART" then
-
   if (
     e.target.matches("button.text-white.py-2.px-4.text-xl.bg-blue-500.rounded")
   ) {
@@ -109,7 +123,6 @@ document.addEventListener("click", (e) => {
 
               colorBox.children[1].children[0].append(span);
               addSingleAndTotal(color, colorBox);
-              toLocalStorage();
               count = 2;
 
               return;
@@ -123,12 +136,12 @@ document.addEventListener("click", (e) => {
                 let newCount = parseInt(
                   colorBox.children[1].children[0].children[0].nextElementSibling.innerHTML.substring(
                     1,
-                    8
+                    10
                   )
                 );
                 addSingleAndTotal(color, colorBox);
                 colorBox.children[1].children[0].children[0].nextElementSibling.innerHTML = `x${++newCount}`;
-                toLocalStorage();
+                // toLocalStorage(totalPriceNum);
                 return;
               }
             }
@@ -168,12 +181,13 @@ document.addEventListener("click", (e) => {
           // Remove color box from shopping cart
           colorBox.remove();
           // Update local storage
-          toLocalStorage();
+
           return;
         }
       }
     }
   }
+  // toLocalStorage(totalPriceNum);
 });
 
 // Functions
@@ -196,7 +210,7 @@ function addBlock(color, colorBox) {
         colorBoxes.push(cBox);
         colorCart.append(cBox);
         // Update local storage
-        toLocalStorage();
+        toLocalStorage(totalPriceNum);
       }
     }
   });
@@ -215,7 +229,7 @@ function addSingleAndTotal(color, colorBox) {
         colorBox.children[1].children[1].textContent = `$${totalSinglePriceItem}.00`;
         totalPriceNum = totalPriceNum + truePrice;
         totalPriceString.textContent = `$${totalPriceNum}.00`;
-        toLocalStorage();
+        toLocalStorage(totalPriceNum);
       }
     }
   });
@@ -251,10 +265,18 @@ function createColorBlock(name, price, color) {
   return result;
 }
 
-function toLocalStorage() {
+function toLocalStorage(total) {
+  // Log html code colors
   let newBoxes = colorBoxes.map((box) => {
-    return box.innerHTML;
+    return box.outerHTML;
   });
   let string = JSON.stringify(newBoxes);
-  localStorage.setItem("key", string);
+  localStorage.setItem("colorBoxes", string);
+  // Log total price
+  let arrTotal = [];
+  arrTotal.push(total);
+  arrTotal.forEach((item) => {
+    return JSON.stringify(item);
+  });
+  localStorage.setItem("totalPrice", arrTotal);
 }
