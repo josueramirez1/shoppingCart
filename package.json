@@ -1,0 +1,16 @@
+{
+  "name": "shoppingcart",
+  "version": "1.0.0",
+  "main": "script.js",
+  "scripts": {
+    "start": "parcel index.html store.html team.html",
+    "build": "parce build index.html store.html team.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5"
+  },
+  "description": ""
+}
