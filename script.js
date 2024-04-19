@@ -42,7 +42,7 @@ let savedColors = JSON.parse(localStorage.getItem("colorBoxes"));
 let savedPrice = JSON.parse(localStorage.getItem("totalPrice"));
 
 // If local storage contains values...
-if (savedColors !== null && savedPrice !== null) {
+if (savedColors !== null && savedPrice !== 0) {
   // Show shopping cart button
   cartBtn.classList.remove("invisible");
   // Select cart and total html
@@ -180,7 +180,6 @@ document.addEventListener("click", (e) => {
           }
           // Remove color box from shopping cart
           colorBox.remove();
-          // Update local storage
 
           return;
         }
