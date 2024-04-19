@@ -1,3 +1,4 @@
+// import items from "./items.json";
 // Get selectors
 const cartBtn = document.querySelector(
   "button.fixed.top-0.right-0.mr-4.mt-4.w-12.bg-blue-500.p-2.rounded-full.text-white"
@@ -15,8 +16,6 @@ const colorName = document.querySelectorAll(
 );
 let colorCart = document.querySelector("div.overflow-y-auto.px-4.pt-4");
 
-// let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
-
 // FETCH Json data
 async function getItems(num) {
   try {
@@ -29,6 +28,7 @@ async function getItems(num) {
     console.error(error);
   }
 }
+
 // Retrieve local storage items
 let savedColors = JSON.parse(localStorage.getItem("colorBoxes"));
 let savedPrice = JSON.parse(localStorage.getItem("totalPrice"));
@@ -64,16 +64,13 @@ let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
 let count = 2;
 
 // EVENT LISTENERS
-// This even listener is responsible for button icon
+
+// This event listener is for adding things to cart
 document.addEventListener("click", (e) => {
   // If user clicks on svg button, the shopping cart will appear
   if (e.target === cartBtn || e.target === svgCartBtn) {
     shoppingCart.classList.toggle("invisible");
   }
-});
-
-// This event listener is for adding things to cart
-document.addEventListener("click", (e) => {
   // If user clicks "ADD TO CART" then
   if (
     e.target.matches("button.text-white.py-2.px-4.text-xl.bg-blue-500.rounded")
@@ -85,7 +82,6 @@ document.addEventListener("click", (e) => {
         if (cartBtn.matches(".invisible") && cartBox.matches(".invisible")) {
           cartBtn.classList.remove("invisible");
         }
-
         let newColorBoxes = colorBoxes.filter((colorBox) => {
           // Return items that match the color that is to be added
           return (
@@ -98,6 +94,7 @@ document.addEventListener("click", (e) => {
           let numRedCounter = parseInt(redCounter.innerText) + 1;
           redCounter.innerText = numRedCounter;
           addBlock(color);
+          return;
         }
         // but...
         colorBoxes.forEach((colorBox) => {
@@ -120,7 +117,6 @@ document.addEventListener("click", (e) => {
               colorBox.children[1].children[0].append(span);
               addSingleAndTotal(color, colorBox);
               count = 2;
-
               return;
             }
             // or if item already has a counter, continue adding up
@@ -137,7 +133,6 @@ document.addEventListener("click", (e) => {
                 );
                 addSingleAndTotal(color, colorBox);
                 colorBox.children[1].children[0].children[0].nextElementSibling.innerHTML = `x${++newCount}`;
-                // toLocalStorage(totalPriceNum);
                 return;
               }
             }
@@ -155,7 +150,6 @@ document.addEventListener("click", (e) => {
     if (e.target.closest(".mb-6") === colorBox.closest(".mb-6")) {
       let colorToEnter =
         e.target.parentElement.nextElementSibling.children[0].children[0];
-      // This if statement removes items from cart and array if it is not in the store html page.
       // if color box and color share the same name...
       if (
         colorToEnter.textContent ===
@@ -178,36 +172,8 @@ document.addEventListener("click", (e) => {
         }
         // Remove color box from shopping cart
         colorBox.remove();
+        toLocalStorage(totalPriceNum);
         return;
-      }
-      // This section removes items from cart and array if in store html page
-      for (let color of colorName) {
-        // if color box and color share the same name...
-
-        if (
-          color.closest(".mt-4").children[0].children[1].innerText ===
-          colorBox.children[1].children[0].children[0].innerText
-        ) {
-          // Remove one counter and subtract from total price
-          let subRedCounter = parseInt(redCounter.innerText) - 1;
-          redCounter.innerText = subRedCounter;
-          console.log(color);
-          subtractSingleAndTotal(color, colorBox);
-          // If the red counter turns to zero
-          if (subRedCounter === 0) {
-            // Remove both shopping cart and icon from sight
-            cartBtn.classList.add("invisible");
-            cartBox.classList.add("invisible");
-          }
-          // Remove item from array
-          const item = colorBoxes.indexOf(colorBox);
-          if (item > -1) {
-            colorBoxes.splice(item, 1);
-          }
-          // Remove color box from shopping cart
-          colorBox.remove();
-          return;
-        }
       }
     }
   }
@@ -216,7 +182,7 @@ document.addEventListener("click", (e) => {
 // Functions
 
 function addBlock(color, colorBox) {
-  return getItems().then((data) => {
+  getItems().then((data) => {
     for (let object of data) {
       if (color.innerText === object.name) {
         let convertToString = object.priceCents.toString();
@@ -232,6 +198,7 @@ function addBlock(color, colorBox) {
         totalPriceString.textContent = `$${totalPriceNum}.00`;
         colorBoxes.push(cBox);
         colorCart.append(cBox);
+
         // Update local storage
         toLocalStorage(totalPriceNum);
       }
@@ -271,7 +238,6 @@ function subtractSingleAndTotal(color, colorBox) {
               8
             )
           );
-
           let addedPrice = truePrice * newCount;
           totalPriceNum = totalPriceNum - addedPrice;
           totalPriceString.textContent = `$${totalPriceNum}.00`;
