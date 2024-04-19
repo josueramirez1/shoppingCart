@@ -67,7 +67,6 @@ let totalPriceString =
   section.nextElementSibling.children[0].children[0].children[1].children[1];
 let totalPriceNum = parseInt(totalPriceString.innerHTML.substring(1, 8));
 let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
-console.log(totalPriceNum);
 let count = 2;
 
 document.addEventListener("click", (e) => {
@@ -154,11 +153,38 @@ document.addEventListener("click", (e) => {
 
 // Close button
 document.addEventListener("click", (e) => {
-  for (let color of colorName) {
-    for (let colorBox of colorBoxes) {
-      // if user clicks on close button...
-      if (e.target.closest(".mb-6") === colorBox.closest(".mb-6")) {
-        // if color box and color share the same name...
+  for (let colorBox of colorBoxes) {
+    // if user clicks on close button...
+    if (e.target.closest(".mb-6") === colorBox.closest(".mb-6")) {
+      // if color box and color share the same name...
+      let colorToEnter =
+        e.target.parentElement.nextElementSibling.children[0].children[0];
+      if (
+        colorToEnter.textContent ===
+        colorBox.children[1].children[0].children[0].textContent
+      ) {
+        // Remove one counter and subtract from total price
+        let subRedCounter = parseInt(redCounter.innerText) - 1;
+        redCounter.innerText = subRedCounter;
+        subtractSingleAndTotal(colorToEnter, colorBox);
+        // If the red counter turns to zero
+        if (subRedCounter === 0) {
+          // Remove both shopping cart and icon from sight
+          cartBtn.classList.add("invisible");
+          cartBox.classList.add("invisible");
+        }
+        // Remove item from array
+        const item = colorBoxes.indexOf(colorBox);
+        if (item > -1) {
+          colorBoxes.splice(item, 1);
+        }
+        // Remove color box from shopping cart
+        colorBox.remove();
+
+        return;
+      }
+
+      for (let color of colorName) {
         if (
           color.closest(".mt-4").children[0].children[1].innerText ===
           colorBox.children[1].children[0].children[0].innerText
@@ -166,6 +192,7 @@ document.addEventListener("click", (e) => {
           // Remove one counter and subtract from total price
           let subRedCounter = parseInt(redCounter.innerText) - 1;
           redCounter.innerText = subRedCounter;
+          console.log(color);
           subtractSingleAndTotal(color, colorBox);
           // If the red counter turns to zero
           if (subRedCounter === 0) {
