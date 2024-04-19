@@ -10,17 +10,9 @@ const shoppingCart = document.querySelector(
   "div.bg-white.text-gray-700.body-font.shadow-lg.border.rounded-lg.flex.flex-col"
 );
 let redCounter = document.querySelector("div.rounded-full");
-const closeBtn = document.querySelectorAll("[data-remove-from-cart-button]");
-
 const colorName = document.querySelectorAll(
   "h2.text-gray-900.text-lg.font-medium"
 );
-let singleItemPrice = Array.from(
-  document.querySelectorAll("div.mt-2.flex.justify-between")
-).map((price) => {
-  return price.children[1];
-});
-
 let colorCart = document.querySelector("div.overflow-y-auto.px-4.pt-4");
 
 // let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
@@ -67,8 +59,12 @@ let totalPriceString =
   section.nextElementSibling.children[0].children[0].children[1].children[1];
 let totalPriceNum = parseInt(totalPriceString.innerHTML.substring(1, 8));
 let colorBoxes = Array.from(document.querySelectorAll(".mb-6"));
+
+// This counter resets in order to allow counting for other boxes in same cart
 let count = 2;
 
+// EVENT LISTENERS
+// This even listener is responsible for button icon
 document.addEventListener("click", (e) => {
   // If user clicks on svg button, the shopping cart will appear
   if (e.target === cartBtn || e.target === svgCartBtn) {
@@ -76,6 +72,7 @@ document.addEventListener("click", (e) => {
   }
 });
 
+// This event listener is for adding things to cart
 document.addEventListener("click", (e) => {
   // If user clicks "ADD TO CART" then
   if (
@@ -151,14 +148,15 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// Close button
+// This event listener removes item from cart and array
 document.addEventListener("click", (e) => {
   for (let colorBox of colorBoxes) {
     // if user clicks on close button...
     if (e.target.closest(".mb-6") === colorBox.closest(".mb-6")) {
-      // if color box and color share the same name...
       let colorToEnter =
         e.target.parentElement.nextElementSibling.children[0].children[0];
+      // This if statement removes items from cart and array if it is not in the store html page.
+      // if color box and color share the same name...
       if (
         colorToEnter.textContent ===
         colorBox.children[1].children[0].children[0].textContent
@@ -180,11 +178,12 @@ document.addEventListener("click", (e) => {
         }
         // Remove color box from shopping cart
         colorBox.remove();
-
         return;
       }
-
+      // This section removes items from cart and array if in store html page
       for (let color of colorName) {
+        // if color box and color share the same name...
+
         if (
           color.closest(".mt-4").children[0].children[1].innerText ===
           colorBox.children[1].children[0].children[0].innerText
@@ -207,13 +206,11 @@ document.addEventListener("click", (e) => {
           }
           // Remove color box from shopping cart
           colorBox.remove();
-
           return;
         }
       }
     }
   }
-  // toLocalStorage(totalPriceNum);
 });
 
 // Functions
