@@ -131,8 +131,8 @@ document.addEventListener("click", (e) => {
                     10
                   )
                 );
-                addSingleAndTotal(color, colorBox);
                 colorBox.children[1].children[0].children[0].nextElementSibling.innerHTML = `x${++newCount}`;
+                addSingleAndTotal(color, colorBox);
                 return;
               }
             }
@@ -263,10 +263,11 @@ function toLocalStorage(total) {
   let string = JSON.stringify(newBoxes);
   localStorage.setItem("colorBoxes", string);
   // Log total price
-  let arrTotal = [];
-  arrTotal.push(total);
-  arrTotal.forEach((item) => {
-    return JSON.stringify(item);
-  });
-  localStorage.setItem("totalPrice", arrTotal);
+  localStorage.setItem("totalPrice", total);
+
+  // let arrTotal = [];
+  // arrTotal.push(total);
+  // arrTotal.forEach((item) => {
+  //   return JSON.stringify(item);
+  // });
 }
